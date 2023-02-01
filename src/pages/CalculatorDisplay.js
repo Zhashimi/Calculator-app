@@ -1,149 +1,145 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Buttons from "../components/buttons";
 
 
-const CalculatorDisplay = () => {
-    const [mines, setMines] = useState(true);
-    const [currentOperand, setCurrentOperand] = useState([]);
-    const [previousOperand, setPreviousOperand] = useState([]);
-    const [result,setResult]=useState(null);
-    const [operation, setOperation] = useState();
+const resculatorDisplay = () => {
+    const [input, setInput] = useState('0');
+    const [currentOperand, setCurrentOperand] = useState('');
+    const [previousOperand, setPreviousOperand] = useState('');
+    const [result, setResult] = useState(false);
+    const [operation, setOperation] = useState(null);
 
-    const handleClick = (event) => {
+
+    const inputNum = (event) => {
         event.preventDefault();
-        setResult('');
-        let key = parseInt(event.target.value);
-        if (operation === undefined) {
-           setPreviousOperand((previousOperand)=>[...previousOperand,key]);
-          
+        let key = (event.target.value).toString();
+        if (currentOperand.includes('.') && key === '.') return
+        if (result) {
+            setPreviousOperand('')
         }
-        if(operation !== undefined){
-            setCurrentOperand((currentOperand)=>[...currentOperand,key]);
-        }
-        
+        currentOperand ? setCurrentOperand((pre) => pre + key) : setCurrentOperand(key)
+        setResult(false);
     };
 
-    function addition() {
-        setOperation("+");
-    };
+    useEffect(() => {
+        setInput(currentOperand);
+    }, [currentOperand])
+
+    useEffect(() => {
+        setInput('0');
+    }, [])
+
     const Clear = () => {
         setCurrentOperand('');
         setPreviousOperand('');
-        setOperation(undefined);
-        setMines(true);
+        setOperation(null);
+        setResult(false);
     };
-    const Percentage = () => {
-        setOperation("%");
+    const inputOperator =(event)=>{
+        let key=String(event.target.value);
+        setOperation(key);
+        if(currentOperand === '')return
+        if(previousOperand !== ''){
+            equal();
+        }setPreviousOperand(currentOperand);
+        setCurrentOperand('');
     };
-    const division = () => {
-        setOperation("/");
+    const inputMines =()=>{
 
-    };
-    const multiplication = () => {
-        setOperation('*');
+    }
+    const equal=(event)=>{
+        if(event?.target.value === '='){
+            setResult(true);
+        }
+        let res
+        let current = parseFloat(currentOperand);
+        let previous = parseFloat(previousOperand);        
 
-
-    };
-    const subtraction = () => {
-        setOperation("-");
-
-
-    };
-    const period = () => {
-        
-    }; 
-    const equal = () => {
-        let current=currentOperand.reduce((accum, digit) => (accum * 10) + digit, 0);
-        let previous=previousOperand.reduce((accum, digit) => (accum * 10) + digit, 0);
-        switch (operation) {
+         switch (operation) {
             case '*':
-                setResult(previous * current);
-                Clear();
+            res=String(current * previous);
                 break;
             case '/':
-                setResult(previous / current);
-                Clear();
+                res=String (previous / current);
                 break;
             case '+':
-                setResult(previous + current);
-                Clear();
+                res=String(previous + current);
                 break;
             case '-':
-                setResult(previous - current);
+                res=String(previous - current);
                Clear();
                 break;
-            case '%':
-                setResult((previous * current)/100);
-                Clear();
-                break;
-            default:
+               default:
                 break;
         }
-        
+        setInput('');
+        console.log(res);
+        setPreviousOperand(res);
+        setCurrentOperand('')
 
     };
+    const inputPercent = ()=>{
 
+    }
+    return (<div className="container w-4/4 flex justify-center">
 
-
-    return (<div className="container">
-        <div className="bg-slate-600 px-10 py-10 text-right">
-            {mines === true ? " " : "-"} {previousOperand}
-            {operation}{currentOperand}{result !== null ? result:'' }
-        </div>
-        <div className="grid grid-cols-4 col-span-1 bg-slate-300"
+        <div className="grid grid-cols-4 col-span-1 bg-slate-900"
         >
-            <Buttons value="Ac" id="number" numberKey onClick={Clear} >
+            <div className="bg-slate-600 px-10 py-10 text-right col-span-4">
+                {input !== "" || input ==='0'? input : previousOperand}{operation}{currentOperand}
+            </div>
+            <Buttons value="Ac" id="number" className="bg-slate-600" numberKey onClick={Clear} >
                 Ac
             </Buttons>
-            <Buttons value="+/-" id="number" numberKey onClick={() => { setMines(!mines) }}>
+            <Buttons value="+/-" id="number" numberKey onClick={inputMines}>
                 +/-
             </Buttons>
-            <Buttons value="%" numberKey onClick={Percentage}>
+            <Buttons value="%" numberKey onClick={inputPercent}>
                 %
             </Buttons>
-            <Buttons value="/" operationKey onClick={division}>
+            <Buttons value="/" operationKey onClick={inputOperator}>
                 /
             </Buttons>
-            <Buttons value="7" numberKey onClick={handleClick}>
+            <Buttons value="7" numberKey onClick={inputNum}>
                 7
             </Buttons>
-            <Buttons value="8" numberKey onClick={handleClick}>
+            <Buttons value="8" numberKey onClick={inputNum}>
                 8
             </Buttons>
-            <Buttons value="9" numberKey onClick={handleClick}>
+            <Buttons value="9" numberKey onClick={inputNum}>
                 9
             </Buttons>
-            <Buttons value="*" operationKey onClick={multiplication}>
+            <Buttons value="*" operationKey onClick={inputOperator} >
                 X
             </Buttons>
-            <Buttons value="4" numberKey onClick={handleClick}>
+            <Buttons value="4" numberKey onClick={inputNum}>
                 4
             </Buttons>
-            <Buttons value="5" numberKey onClick={handleClick}>
+            <Buttons value="5" numberKey onClick={inputNum}>
                 5
             </Buttons>
-            <Buttons value="6" numberKey onClick={handleClick}>
+            <Buttons value="6" numberKey onClick={inputNum}>
                 6
             </Buttons>
-            <Buttons value="-" operationKey onClick={subtraction}>
+            <Buttons value="-" operationKey onClick={inputOperator}>
                 -
             </Buttons>
-            <Buttons value="1" numberKey onClick={handleClick}>
+            <Buttons value="1" numberKey onClick={inputNum}>
                 1
             </Buttons>
-            <Buttons value="2" numberKey onClick={handleClick}>
+            <Buttons value="2" numberKey onClick={inputNum}>
                 2
             </Buttons>
-            <Buttons value="3" numberKey onClick={handleClick}>
+            <Buttons value="3" numberKey onClick={inputNum}>
                 3
             </Buttons>
-            <Buttons value="+" operationKey onClick={addition}>
+            <Buttons value="+" operationKey onClick={inputOperator}>
                 +
             </Buttons>
-            <Buttons value="0" className="col-span-2" numberKey onClick={handleClick}>
+            <Buttons value="0" className="col-span-2" numberKey onClick={inputNum}>
                 0
             </Buttons>
-            <Buttons value="." numberKey onClick={period}>
+            <Buttons value="." numberKey onClick={inputNum}>
                 .
             </Buttons>
             <Buttons value="=" operationKey onClick={equal}>
@@ -154,4 +150,4 @@ const CalculatorDisplay = () => {
     );
 
 };
-export default CalculatorDisplay;
+export default resculatorDisplay;
