@@ -1,100 +1,106 @@
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import Buttons from "../components/buttons";
-
-
-const resculatorDisplay = () => {
+const CalculatorDisplay = () => {
     const [input, setInput] = useState('0');
     const [currentOperand, setCurrentOperand] = useState('');
     const [previousOperand, setPreviousOperand] = useState('');
     const [result, setResult] = useState(false);
     const [operation, setOperation] = useState(null);
-
-
+    
     const inputNum = (event) => {
-        event.preventDefault();
-        let key = (event.target.value).toString();
+        let key = event.target.value;
         if (currentOperand.includes('.') && key === '.') return
-        if (result) {
+        if (currentOperand === '0' && key === '0') return
+        if (result)
+        {
             setPreviousOperand('')
         }
-        currentOperand ? setCurrentOperand((pre) => pre + key) : setCurrentOperand(key)
-        setResult(false);
+        if(currentOperand.charAt(0)==='0'){
+            setCurrentOperand(key);
+            setInput(currentOperand);
+        }
+        else{currentOperand ? setCurrentOperand((pre) => pre + key) : setCurrentOperand(key)
+            setInput(currentOperand);
+        setResult(false);}
     };
-
-    useEffect(() => {
-        setInput(currentOperand);
-    }, [currentOperand])
-
-    useEffect(() => {
-        setInput('0');
-    }, [])
-
     const Clear = () => {
         setCurrentOperand('');
         setPreviousOperand('');
+        setInput('0');
         setOperation(null);
         setResult(false);
+        console.log("clear called")
     };
-    const inputOperator =(event)=>{
-        let key=String(event.target.value);
+    const inputOperator = (event) => {
+        let key = event.target.value;
         setOperation(key);
-        if(currentOperand === '')return
-        if(previousOperand !== ''){
+        if (currentOperand === '') return
+        if (previousOperand !== '') {
             equal();
-        }setPreviousOperand(currentOperand);
-        setCurrentOperand('');
-    };
-    const inputMines =()=>{
+        }
+        else{
+            setPreviousOperand(currentOperand);
+            setCurrentOperand('');
+        }
 
-    }
-    const equal=(event)=>{
-        if(event?.target.value === '='){
+    };
+
+    const inputMines = () => {
+        if (currentOperand.charAt(0) === '-') {
+            setCurrentOperand(currentOperand.substring(1));
+        }
+        else {
+            setCurrentOperand('-' + currentOperand);
+        }
+
+    };
+    const equal = (event) => {
+        if (event?.target.value === '='){
             setResult(true);
         }
         let res
         let current = parseFloat(currentOperand);
-        let previous = parseFloat(previousOperand);        
+        let previous = parseFloat(previousOperand);
 
-         switch (operation) {
+        switch (operation) {
             case '*':
-            res=String(current * previous);
+                res = String(current * previous);
                 break;
             case '/':
-                res=String (previous / current);
+                res = String(previous / current);
                 break;
             case '+':
-                res=String(previous + current);
+                res = String(previous + current);
                 break;
             case '-':
-                res=String(previous - current);
-               Clear();
+                res = String(previous - current);
                 break;
-               default:
+            default:
                 break;
         }
         setInput('');
-        console.log(res);
         setPreviousOperand(res);
-        setCurrentOperand('')
-
+        setCurrentOperand('');
     };
-    const inputPercent = ()=>{
-
+    const inputPercent = () => {
+        previousOperand ?
+            setCurrentOperand(String((parseFloat(currentOperand) / 100) * previousOperand))
+            : setCurrentOperand(String(parseFloat(currentOperand) / 100))
     }
     return (<div className="container w-4/4 flex justify-center">
 
-        <div className="grid grid-cols-4 col-span-1 bg-slate-900"
-        >
-            <div className="bg-slate-600 px-10 py-10 text-right col-span-4">
-                {input !== "" || input ==='0'? input : previousOperand}{operation}{currentOperand}
+        <div className="grid grid-cols-4 col-span-1 bg-slate-900 rounded-md">
+            <div className="bg-slate-600 px-8 py-8 text-right col-span-4  rounded-md">
+                {input === '0' && input}
+                {previousOperand !=='' && previousOperand }{result === false ? operation : ''}{currentOperand !=='' && currentOperand }
             </div>
-            <Buttons value="Ac" id="number" className="bg-slate-600" numberKey onClick={Clear} >
+            <Buttons value="Ac" id="number" className="bg-gray-700" numberKey onClick={Clear} >
                 Ac
             </Buttons>
-            <Buttons value="+/-" id="number" numberKey onClick={inputMines}>
+            <Buttons value="+/-" id="number"  className="bg-gray-700" numberKey onClick={inputMines}>
                 +/-
             </Buttons>
-            <Buttons value="%" numberKey onClick={inputPercent}>
+            <Buttons value="%"  className="bg-gray-700" numberKey onClick={inputPercent}>
                 %
             </Buttons>
             <Buttons value="/" operationKey onClick={inputOperator}>
@@ -150,4 +156,4 @@ const resculatorDisplay = () => {
     );
 
 };
-export default resculatorDisplay;
+export default CalculatorDisplay;
