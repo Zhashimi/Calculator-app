@@ -1,106 +1,37 @@
-import React, {useState } from "react";
 import Buttons from "../components/buttons";
+import { useCalculate } from "../components/functions";
 const CalculatorDisplay = () => {
-    const [input, setInput] = useState('0');
-    const [currentOperand, setCurrentOperand] = useState('');
-    const [previousOperand, setPreviousOperand] = useState('');
-    const [result, setResult] = useState(false);
-    const [operation, setOperation] = useState(null);
     
-    const inputNum = (event) => {
-        let key = event.target.value;
-        if (currentOperand.includes('.') && key === '.') return
-        if (currentOperand === '0' && key === '0') return
-        if (result)
-        {
-            setPreviousOperand('')
-        }
-        if(currentOperand.charAt(0)==='0'){
-            setCurrentOperand(key);
-            setInput(currentOperand);
-        }
-        else{currentOperand ? setCurrentOperand((pre) => pre + key) : setCurrentOperand(key)
-            setInput(currentOperand);
-        setResult(false);}
-    };
-    const Clear = () => {
-        setCurrentOperand('');
-        setPreviousOperand('');
-        setInput('0');
-        setOperation(null);
-        setResult(false);
-        console.log("clear called")
-    };
-    const inputOperator = (event) => {
-        let key = event.target.value;
-        setOperation(key);
-        if (currentOperand === '') return
-        if (previousOperand !== '') {
-            equal();
-        }
-        else{
-            setPreviousOperand(currentOperand);
-            setCurrentOperand('');
-        }
-
-    };
-
-    const inputMines = () => {
-        if (currentOperand.charAt(0) === '-') {
-            setCurrentOperand(currentOperand.substring(1));
-        }
-        else {
-            setCurrentOperand('-' + currentOperand);
-        }
-
-    };
-    const equal = (event) => {
-        if (event?.target.value === '='){
-            setResult(true);
-        }
-        let res
-        let current = parseFloat(currentOperand);
-        let previous = parseFloat(previousOperand);
-
-        switch (operation) {
-            case '*':
-                res = String(current * previous);
-                break;
-            case '/':
-                res = String(previous / current);
-                break;
-            case '+':
-                res = String(previous + current);
-                break;
-            case '-':
-                res = String(previous - current);
-                break;
-            default:
-                break;
-        }
-        setInput('');
-        setPreviousOperand(res);
-        setCurrentOperand('');
-    };
-    const inputPercent = () => {
-        previousOperand ?
-            setCurrentOperand(String((parseFloat(currentOperand) / 100) * previousOperand))
-            : setCurrentOperand(String(parseFloat(currentOperand) / 100))
-    }
+    const { previousOperand,
+        currentOperand,
+        operation,
+        input,
+        result,
+        inputPercent,
+        inputMines,
+        equal,
+        Clear,
+        handleKey,
+        inputOperator,
+        inputNum } = useCalculate();
+        
     return (<div className="container w-4/4 flex justify-center">
 
-        <div className="grid grid-cols-4 col-span-1 bg-slate-900 rounded-md">
-            <div className="bg-slate-600 px-8 py-8 text-right col-span-4  rounded-md">
-                {input === '0' && input}
-                {previousOperand !=='' && previousOperand }{result === false ? operation : ''}{currentOperand !=='' && currentOperand }
-            </div>
-            <Buttons value="Ac" id="number" className="bg-gray-700" numberKey onClick={Clear} >
+        <div className="grid grid-cols-4 col-span-1 bg-slate-900 rounded-md" onKeyDown={handleKey} tabIndex="0"  >
+            <input type="text"
+                className="bg-slate-600 px-3 py-3 text-right col-span-4 rounded-md"
+                value={(input === '0' && input) || (previousOperand !== '' && previousOperand) || (currentOperand !== '' && currentOperand) || (result === false ? operation : '')}
+            >
+
+            </input>
+
+            <Buttons value="Ac" id="number" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={Clear} >
                 Ac
             </Buttons>
-            <Buttons value="+/-" id="number"  className="bg-gray-700" numberKey onClick={inputMines}>
+            <Buttons value="+/-" id="number" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputMines}>
                 +/-
             </Buttons>
-            <Buttons value="%"  className="bg-gray-700" numberKey onClick={inputPercent}>
+            <Buttons value="%" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputPercent}>
                 %
             </Buttons>
             <Buttons value="/" operationKey onClick={inputOperator}>
