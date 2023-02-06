@@ -1,37 +1,43 @@
 import Buttons from "../components/buttons";
-import { useCalculate } from "../components/functions";
+import React, { useEffect, useRef } from "react";
+import { useCalculate } from "../components/hooks/functions";
 const CalculatorDisplay = () => {
-    
     const { previousOperand,
         currentOperand,
         operation,
         input,
         result,
-        inputPercent,
         inputMines,
-        equal,
         Clear,
         handleKey,
         inputOperator,
         inputNum } = useCalculate();
-        
+    const divRef = useRef();
+
+    useEffect(() => {
+        if (divRef.current) {
+            divRef.current.focus();
+        }
+    }, []);
+
     return (<div className="container w-4/4 flex justify-center">
 
-        <div className="grid grid-cols-4 col-span-1 bg-slate-900 rounded-md" onKeyDown={handleKey} tabIndex="0"  >
-            <input type="text"
-                className="bg-slate-600 px-3 py-3 text-right col-span-4 rounded-md"
-                value={(input === '0' && input) || (previousOperand !== '' && previousOperand) || (currentOperand !== '' && currentOperand) || (result === false ? operation : '')}
-            >
-
-            </input>
-
+        <div className="grid grid-cols-4 col-span-1 bg-slate-900 rounded-md"
+            autoFocus
+            ref={divRef} onClick={console.log('hi')}
+            onKeyDown={handleKey} tabIndex="0"  >
+            <div className="bg-slate-600 px-3 py-3 text-right col-span-4 rounded-md" >
+                {input === '0' && input}{previousOperand !== '' && previousOperand}
+                {result === false ? operation : ''}
+                {currentOperand !== '' && currentOperand}
+            </div>
             <Buttons value="Ac" id="number" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={Clear} >
                 Ac
             </Buttons>
             <Buttons value="+/-" id="number" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputMines}>
                 +/-
             </Buttons>
-            <Buttons value="%" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputPercent}>
+            <Buttons value="%" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputOperator}>
                 %
             </Buttons>
             <Buttons value="/" operationKey onClick={inputOperator}>
@@ -79,7 +85,7 @@ const CalculatorDisplay = () => {
             <Buttons value="." numberKey onClick={inputNum}>
                 .
             </Buttons>
-            <Buttons value="=" operationKey onClick={equal}>
+            <Buttons value="=" operationKey onClick={inputOperator}>
                 =
             </Buttons>
         </div>

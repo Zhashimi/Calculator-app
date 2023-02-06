@@ -7,7 +7,8 @@ const useCalculate=()=>{
     const [operation, setOperation] = useState(null);
     const [test, setTest] = useState('');
     const num = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.'];
-    const oper = ['/', '+', '-', '*'];
+    const oper = ['/', '+', '-', '*','%'];
+
     const detectNumber=(key)=>{
         if (currentOperand.includes('.') && key === '.') return
         if (currentOperand === '0' && key === '0') return
@@ -25,6 +26,12 @@ const useCalculate=()=>{
         }
         
         const detectOperator =(key)=>{
+            if(key === "="){
+                equal(key);
+            }
+            if(key === "%"){
+                inputPercent();
+            }
             setOperation(key);
             if (currentOperand === '') return
             if (previousOperand !== '') {
@@ -40,6 +47,7 @@ const useCalculate=()=>{
             let key = event.target.value;
             detectOperator(key);
         };
+
     
         const inputMines = () => {
             if (currentOperand.charAt(0) === '-') {
@@ -49,9 +57,8 @@ const useCalculate=()=>{
                 setCurrentOperand('-' + currentOperand);
             }
         };
-
-        const equal = (event) => {
-            if (event?.target.value === '='){
+        const equal = (key) => {
+            if (key === '=' || key ==='Enter'){
                 setResult(true);
             }
             let res
@@ -84,21 +91,18 @@ const useCalculate=()=>{
                 : setCurrentOperand(String(parseFloat(currentOperand) / 100))
         }
       
-    const handleKey = (event) => {
-        if (num.includes(event.key)) {
-            let keyboard = test + event.key;
-            detectNumber(keyboard);
+        const handleKey = (event) => {
+            if (num.includes(event.key)) {
+                let keyboard = test + event.key;
+                detectNumber(keyboard);
+            }
+            if (oper.includes(event.key)) {
+                detectOperator(event.key);
+            }
+            if (event.key === 'Enter') {
+                equal(event.key);
+            }
         }
-        if (oper.includes(event.key)) {
-            detectOperator(event.key);
-        }
-        if (event.key === '%') {
-            inputPercent();
-        }
-        if (event.key === '=') {
-            equal();
-        }
-    }
     const inputNum = (event) => {
         let key = event.target.value;
         detectNumber(key);
