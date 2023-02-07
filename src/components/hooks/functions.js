@@ -26,9 +26,6 @@ const useCalculate=()=>{
         }
         
         const detectOperator =(key)=>{
-            if(key === "="){
-                equal(key);
-            }
             if(key === "%"){
                 inputPercent();
             }
@@ -41,7 +38,7 @@ const useCalculate=()=>{
                 setPreviousOperand(currentOperand);
                 setCurrentOperand('');
             }
-    
+            
         }
         const inputOperator = (event) => {
             let key = event.target.value;
@@ -86,6 +83,9 @@ const useCalculate=()=>{
             setCurrentOperand('');
         };
         const inputPercent = () => {
+            if(currentOperand === ''){
+                return;
+            }
             previousOperand ?
                 setCurrentOperand(String((parseFloat(currentOperand) / 100) * previousOperand))
                 : setCurrentOperand(String(parseFloat(currentOperand) / 100))
@@ -102,11 +102,29 @@ const useCalculate=()=>{
             if (event.key === 'Enter') {
                 equal(event.key);
             }
+            if(event.key === 'Backspace'){
+                backSpace();
+            }
         }
     const inputNum = (event) => {
         let key = event.target.value;
         detectNumber(key);
     };
+    const inputX =(event)=>{
+        setResult(true);
+        let key = event.target.value;
+        if(key === 'x'){
+            setCurrentOperand(Math.sqrt(currentOperand));
+        }
+        if(key === '1/x'){
+            setCurrentOperand(1/currentOperand);
+        }
+        if(key === 'x2'){
+            setCurrentOperand(currentOperand * currentOperand);
+        }
+        setResult(false);
+
+    }
     const Clear = () => {
         setCurrentOperand('');
         setPreviousOperand('');
@@ -116,16 +134,40 @@ const useCalculate=()=>{
         setTest('');
         console.log("clear called")
     };
+    const backSpace=()=>{
+        if(previousOperand ==='' && currentOperand !==''){
+            setCurrentOperand(currentOperand.substring(0,currentOperand.length -1));
+            if(currentOperand.length === 1){
+                setInput('0');
+            }
+        }
+        if(currentOperand === '' && previousOperand !==''){
+            if(operation !== null){
+                setOperation(null);
+            }
+            if(operation === null){
+            setPreviousOperand(previousOperand.substring(0,previousOperand.length -1));
+            if(previousOperand.length === 1){
+                setInput('0');
+            }}
+        }
+        if(previousOperand !=='' && currentOperand !==''){
+            setCurrentOperand(currentOperand.substring(0,currentOperand.length -1));
+        }
+        
+    }
         return{
             previousOperand,
             currentOperand,
             operation,
             input,
             result,
-            inputPercent,
             inputMines,
-            equal,
             handleKey,
+            inputX,
+            equal,
+            inputPercent,
+            backSpace,
             inputOperator,
             inputNum,
             Clear,
