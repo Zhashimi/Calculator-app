@@ -1,6 +1,9 @@
 import Buttons from "../components/buttons";
 import React, { useEffect, useRef } from "react";
-import { useCalculate } from "../components/hooks/functions";
+import { FaBackspace } from "react-icons/fa";
+import { FcCalculator } from "react-icons/fc";
+
+import { UseCalculate } from "../components/hooks/functions";
 const CalculatorDisplay = () => {
     const { previousOperand,
         currentOperand,
@@ -10,8 +13,13 @@ const CalculatorDisplay = () => {
         inputMines,
         Clear,
         handleKey,
+        inputX,
+        equal,
+        backSpace,
+        inputPercent,
         inputOperator,
-        inputNum } = useCalculate();
+        inputNum ,
+     } = UseCalculate();
     const divRef = useRef();
 
     useEffect(() => {
@@ -21,23 +29,35 @@ const CalculatorDisplay = () => {
     }, []);
 
     return (<div className="container w-4/4 flex justify-center">
-
         <div className="grid grid-cols-4 col-span-1 bg-slate-900 rounded-md"
             autoFocus
-            ref={divRef} onClick={console.log('hi')}
+            ref={divRef}
             onKeyDown={handleKey} tabIndex="0"  >
-            <div className="bg-slate-600 px-3 py-3 text-right col-span-4 rounded-md" >
+            <div className="bg-slate-600 px-3 py-6 text-right col-span-4 rounded-md">
+                <FcCalculator />
                 {input === '0' && input}{previousOperand !== '' && previousOperand}
-                {result === false ? operation : ''}
+                {result === false ? operation : '0'}
                 {currentOperand !== '' && currentOperand}
             </div>
+            <Buttons value="1/x" id="number" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputX}>
+                1/x
+            </Buttons>
+            <Buttons value="x" id="number" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputX} >
+            &radic;x
+            </Buttons>
+            <Buttons value="x2" id="number" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputX} >
+                x<sup>2</sup>
+            </Buttons> 
+            <Buttons value="Ac" id="number" operationKey onClick={backSpace} >
+            <FaBackspace />
+            </Buttons>
             <Buttons value="Ac" id="number" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={Clear} >
                 Ac
-            </Buttons>
+            </Buttons> 
             <Buttons value="+/-" id="number" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputMines}>
                 +/-
             </Buttons>
-            <Buttons value="%" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputOperator}>
+            <Buttons value="%" className="bg-gray-700 hover:bg-gray-500" numberKey onClick={inputPercent}>
                 %
             </Buttons>
             <Buttons value="/" operationKey onClick={inputOperator}>
@@ -85,7 +105,7 @@ const CalculatorDisplay = () => {
             <Buttons value="." numberKey onClick={inputNum}>
                 .
             </Buttons>
-            <Buttons value="=" operationKey onClick={inputOperator}>
+            <Buttons value="=" operationKey onClick={equal}>
                 =
             </Buttons>
         </div>

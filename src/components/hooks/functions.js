@@ -1,5 +1,5 @@
 import { useState} from "react";
-const useCalculate=()=>{
+const UseCalculate=()=>{
     const [input, setInput] = useState('0');
     const [currentOperand, setCurrentOperand] = useState('');
     const [previousOperand, setPreviousOperand] = useState('');
@@ -29,8 +29,8 @@ const useCalculate=()=>{
             if(key === "%"){
                 inputPercent();
             }
+            if (currentOperand === '') return;
             setOperation(key);
-            if (currentOperand === '') return
             if (previousOperand !== '') {
                 equal();
             }
@@ -38,7 +38,6 @@ const useCalculate=()=>{
                 setPreviousOperand(currentOperand);
                 setCurrentOperand('');
             }
-            
         }
         const inputOperator = (event) => {
             let key = event.target.value;
@@ -55,32 +54,37 @@ const useCalculate=()=>{
             }
         };
         const equal = (key) => {
-            if (key === '=' || key ==='Enter'){
-                setResult(true);
+            if(!result){
+                if (key === '=' || key ==='Enter'){
+                    setResult(true);
+                }
+                if(currentOperand !== '' && previousOperand !== ''){
+                    let res
+                let current = parseFloat(currentOperand);
+                let previous = parseFloat(previousOperand);
+        
+                switch (operation) {
+                    case '*':
+                        res = String(current * previous);
+                        break;
+                    case '/':
+                        res = String(previous / current);
+                        break;
+                    case '+':
+                        res = String(previous + current);
+                        break;
+                    case '-':
+                        res = String(previous - current);
+                        break;
+                    default:
+                        break;
+                }
+                setInput('');
+                setPreviousOperand(res);
+                setCurrentOperand('');
+                setOperation(null);
+                }
             }
-            let res
-            let current = parseFloat(currentOperand);
-            let previous = parseFloat(previousOperand);
-    
-            switch (operation) {
-                case '*':
-                    res = String(current * previous);
-                    break;
-                case '/':
-                    res = String(previous / current);
-                    break;
-                case '+':
-                    res = String(previous + current);
-                    break;
-                case '-':
-                    res = String(previous - current);
-                    break;
-                default:
-                    break;
-            }
-            setInput('');
-            setPreviousOperand(res);
-            setCurrentOperand('');
         };
         const inputPercent = () => {
             if(currentOperand === ''){
@@ -114,13 +118,21 @@ const useCalculate=()=>{
         setResult(true);
         let key = event.target.value;
         if(key === 'x'){
-            setCurrentOperand(Math.sqrt(currentOperand));
+            if(currentOperand.charAt(0) === '-'){
+                setCurrentOperand(currentOperand);
+                console.log('cannot sqrt by negative number')
+            }
+            else setCurrentOperand(String(Math.sqrt(currentOperand)));
         }
         if(key === '1/x'){
-            setCurrentOperand(1/currentOperand);
+            if(currentOperand.charAt(0) === '-'){
+                setCurrentOperand(currentOperand);
+                console.log('cannot dived by negative number')
+            }
+            else setCurrentOperand(String(1/currentOperand));
         }
         if(key === 'x2'){
-            setCurrentOperand(currentOperand * currentOperand);
+            setCurrentOperand(String(currentOperand * currentOperand));
         }
         setResult(false);
 
@@ -132,7 +144,6 @@ const useCalculate=()=>{
         setOperation(null);
         setResult(false);
         setTest('');
-        console.log("clear called")
     };
     const backSpace=()=>{
         if(previousOperand ==='' && currentOperand !==''){
@@ -171,8 +182,8 @@ const useCalculate=()=>{
             inputOperator,
             inputNum,
             Clear,
-        }
+       }
 
        
 };
-export {useCalculate} ;
+export {UseCalculate} ;
